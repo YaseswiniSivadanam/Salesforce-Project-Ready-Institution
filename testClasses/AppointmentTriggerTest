@@ -1,0 +1,20 @@
+@isTest
+public class AppointmentTriggerTest {
+    @isTest
+    static void testAppointmentTrigger() {
+        // Set up test data
+        Student_Student__c student = new Student_Student__c(Name = 'John Doe', Email__c = 'johndoe@example.com');
+        insert student;
+        
+        // Create an appointment
+        Appointment_Appointment__c appointment = new Appointment_Appointment__c(
+            Student_Student__c = student.Id,
+            Appointment_DateTime__c = DateTime.now().addDays(3)
+        );
+        insert appointment;
+        
+        // Query to confirm Task was created
+        Task createdTask = [SELECT Id, Subject FROM Task WHERE WhoId = :student.Id LIMIT 1];
+        System.assertEquals('Appointment Reminder', createdTask.Subject);
+    }
+}
