@@ -1,0 +1,17 @@
+trigger AppointmentTrigger on Appointment_Appointment__c (after insert) {
+    List<Task> tasks = new List<Task>();
+    
+    for (Appointment_Appointment__c app : Trigger.New) {
+        Task t = new Task(
+            Subject = 'Appointment Reminder',
+            Description = 'Reminder for upcoming appointment with ' + app.Student_Student__c,
+            ActivityDate = app.Appointment_DateTime__c.date().addDays(-1),
+            WhoId = app.Student_Student__c,  // assuming this is a lookup to Student
+            Status = 'Not Started'
+        );
+        tasks.add(t);
+    }
+    if (!tasks.isEmpty()) {
+        insert tasks;
+    }
+}
